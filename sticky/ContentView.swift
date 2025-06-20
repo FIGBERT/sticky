@@ -6,25 +6,46 @@
 //
 
 import SwiftUI
-import RealityKit
-import RealityKitContent
 
 struct ContentView: View {
+  @State private var notes: [Note] = []
+  @State private var noteBuilder = Note()
 
-    var body: some View {
-        VStack {
-            Model3D(named: "Scene", bundle: realityKitContentBundle)
-                .padding(.bottom, 50)
+  var body: some View {
+    VStack {
+      Text("Stickies!")
+        .font(.title)
 
-            Text("Hello, world!")
+      ForEach(notes) { note in
+        Text(note.content)
+          .foregroundStyle(note.color)
+          .bold()
+      }
 
-            ToggleImmersiveSpaceButton()
+      HStack {
+        TextField("content", text: $noteBuilder.content)
+          .frame(maxWidth: 80)
+        ColorPicker("paper", selection: $noteBuilder.color)
+          .labelsHidden()
+
+        Button {
+          notes.append(noteBuilder)
+          noteBuilder = Note()
+        } label: {
+          Text("hi")
         }
-        .padding()
+      }
     }
+      .padding()
+  }
+}
+
+struct Note: Identifiable {
+  let id: UUID = UUID()
+  var content: String = ""
+  var color: Color = .yellow
 }
 
 #Preview(windowStyle: .automatic) {
-    ContentView()
-        .environment(AppModel())
+  ContentView()
 }
