@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
   @State private var notes: [Note] = []
-  @State private var noteBuilder = Note()
+  @State private var builder = Note()
 
   var body: some View {
     VStack {
@@ -18,17 +18,21 @@ struct ContentView: View {
 
       ForEach(notes) { note in
         StickyView(note: note)
+          .onTapGesture {
+            builder = note
+            notes.removeAll(where: { $0.id == note.id })
+          }
       }
 
       HStack {
-        TextField("content", text: $noteBuilder.content)
+        TextField("content", text: $builder.content)
           .frame(maxWidth: 80)
-        ColorPicker("paper", selection: $noteBuilder.color)
+        ColorPicker("paper", selection: $builder.color)
           .labelsHidden()
 
         Button {
-          notes.append(noteBuilder)
-          noteBuilder = Note()
+          notes.append(builder)
+          builder = Note()
         } label: {
           Text("hi")
         }
