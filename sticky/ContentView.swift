@@ -25,16 +25,16 @@ struct ContentView: View {
       }
 
       HStack {
-        TextField("content", text: $builder.content)
+        TextField("Content", text: $builder.content)
           .frame(maxWidth: 80)
-        ColorPicker("paper", selection: $builder.color)
+        ColorPicker("Paper", selection: $builder.color)
           .labelsHidden()
 
         Button {
           notes.append(builder)
           builder = Note()
         } label: {
-          Text("hi")
+          Text("Add")
         }
       }
     }
