@@ -17,9 +17,7 @@ struct ContentView: View {
         .font(.title)
 
       ForEach(notes) { note in
-        Text(note.content)
-          .foregroundStyle(note.color)
-          .bold()
+        StickyView(note: note)
       }
 
       HStack {
@@ -38,12 +36,6 @@ struct ContentView: View {
     }
       .padding()
   }
-}
-
-struct Note: Identifiable {
-  let id: UUID = UUID()
-  var content: String = ""
-  var color: Color = .yellow
 }
 
 #Preview(windowStyle: .automatic) {
