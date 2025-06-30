@@ -8,12 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
-  @State private var notes: [Note] = []
+  @Environment(Manager.self) var manager
 
   var body: some View {
     VStack {
       Text("Stickies!")
         .font(.title)
+        .padding(.bottom)
+
+      StickyCreator()
+        .environment(manager)
+        .padding(.bottom)
+
+      HStack {
+        ForEach(manager.notes) { note in
+          StickyView(note: note)
+        }
+      }
     }
       .padding()
   }
@@ -21,4 +32,5 @@ struct ContentView: View {
 
 #Preview(windowStyle: .automatic) {
   ContentView()
+    .environment(Manager())
 }

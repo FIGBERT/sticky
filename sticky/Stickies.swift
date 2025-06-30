@@ -7,22 +7,6 @@
 
 import SwiftUI
 
-@Observable
-class Note: Identifiable {
-  let id: UUID = UUID()
-  var content: AttributedString = ""
-  var color: Color = .yellow
-
-  init(_ content: AttributedString, color: Color) {
-    self.content = content
-    self.color = color
-  }
-
-  init(_ content: AttributedString) {
-    self.content = content
-  }
-}
-
 struct StickyView: View {
   var note: Note
 
@@ -31,6 +15,27 @@ struct StickyView: View {
       .padding()
       .frame(minWidth: 180, maxWidth: 180, minHeight: 180, alignment: .top)
       .background(note.color)
+  }
+}
+
+struct StickyCreator: View {
+  @Environment(Manager.self) var manager
+
+  var body: some View {
+    HStack(alignment: .top) {
+      VStack {
+        StickyEditor(note: manager.note)
+
+        Button {
+          manager.append()
+          manager.reset()
+        } label: {
+          Text("Create")
+        }
+      }
+
+      ColorPicker(note: manager.note)
+    }
   }
 }
 
@@ -43,6 +48,26 @@ struct StickyEditor: View {
       .attributedTextFormattingDefinition(StickyFormattingDefintion())
       .frame(width: 180, height: 180)
       .background(note.color)
+  }
+}
+
+struct ColorPicker: View {
+  @Bindable var note: Note
+
+  var body: some View {
+    VStack(spacing: 0) {
+      ForEach(PadColor.allCases, id: \.self) { pad in
+        Button {
+          note.color = pad.color
+        } label: {
+          Rectangle()
+            .foregroundStyle(pad.color)
+            .frame(width: 45, height: 45)
+            .border(pad.color == note.color ? Color.primary : Color.clear, width: 4)
+        }
+          .buttonStyle(.plain)
+      }
+    }
   }
 }
 
@@ -60,13 +85,19 @@ struct StickyFormattingDefintion: AttributedTextFormattingDefinition {
 }
 
 #Preview {
-  var str = AttributedString("Hello, world!")
+  var str = AttributedString("Hello, static!")
   str.foregroundColor = .black
   str.alignment = .center
 
-  return StickyView(note: Note(str, color: .teal))
+  return StickyView(note: Note(str, color: .padBlue))
 }
 
 #Preview {
-  StickyEditor(note: Note(AttributedString("Hello, world!")))
+  StickyEditor(note: Note(AttributedString("Hello, editable!")))
+    .environment(Manager())
+}
+
+#Preview {
+  StickyCreator()
+    .environment(Manager())
 }

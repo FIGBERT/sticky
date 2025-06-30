@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct stickyApp: App {
+  @State private var manager = Manager()
+
   var body: some Scene {
     WindowGroup {
       ContentView()
+        .environment(manager)
     }
   }
 }
