@@ -30,6 +30,7 @@ class Note: Identifiable {
   let id: UUID = UUID()
   var content: AttributedString = ""
   var color: Color = .padYellow
+  var offset: CGSize = .zero
 
   init(_ content: AttributedString, color: Color) {
     self.content = content

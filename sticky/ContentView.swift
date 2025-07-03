@@ -20,7 +20,7 @@ struct ContentView: View {
         .environment(manager)
         .padding(.bottom)
 
-      HStack {
+      ZStack {
         ForEach(manager.notes) { note in
           StickyEditor(note: note)
         }

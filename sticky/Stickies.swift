@@ -41,6 +41,7 @@ struct StickyCreator: View {
 
 struct StickyEditor: View {
   @Bindable var note: Note
+  @GestureState private var offset: CGSize = .zero
 
   var body: some View {
     TextEditor(text: $note.content)
@@ -48,6 +49,17 @@ struct StickyEditor: View {
       .attributedTextFormattingDefinition(StickyFormattingDefintion())
       .frame(width: 180, height: 180)
       .background(note.color)
+      .offset(CGSize(width: note.offset.width + offset.width, height: note.offset.height + offset.height))
+      .gesture(
+        DragGesture()
+          .updating($offset) { value, state, _ in
+            state = value.translation
+          }
+          .onEnded { value in
+            note.offset.width += value.translation.width
+            note.offset.height += value.translation.height
+          }
+      )
   }
 }
 
