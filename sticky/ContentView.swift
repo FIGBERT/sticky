@@ -22,7 +22,7 @@ struct ContentView: View {
 
       HStack {
         ForEach(manager.notes) { note in
-          StickyView(note: note)
+          StickyEditor(note: note)
         }
       }
     }
