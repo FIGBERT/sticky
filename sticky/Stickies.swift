@@ -27,7 +27,7 @@ struct StickyCreator: View {
         StickyEditor(note: manager.note)
 
         Button {
-          manager.append()
+          manager.append(.note)
           manager.reset()
         } label: {
           Text("Create")

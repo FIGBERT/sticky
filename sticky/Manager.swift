@@ -9,20 +9,47 @@ import SwiftUI
 
 @Observable
 class Manager {
-  var notes: [Note] = []
+  var boards: [UUID: Board] = [:]
+  var board: UUID?
+
   var note = Note()
-
-  func append() {
-    notes.append(note)
-  }
-
-  func remove() {
-    notes.removeAll { $0.id == note.id }
-  }
-
   func reset() {
     note = Note()
   }
+
+  func append(_ type: ManagerObject) {
+    switch type {
+    case .board:
+      let add = Board()
+      boards[add.id] = add
+      board = add.id
+    case .note:
+      guard let board = board else { return }
+      boards[board]?.notes.append(note)
+    }
+  }
+  func remove(_ type: ManagerObject) {
+    switch type {
+    case .board:
+      guard let id = board else { return }
+      boards.removeValue(forKey: id)
+      board = boards.keys.first
+    case .note:
+      return
+    }
+  }
+
+  init() {
+    let first = Board()
+    boards[first.id] = first
+  }
+}
+
+@Observable
+class Board: Identifiable {
+  let id: UUID = UUID()
+  var name: String = "My Board"
+  var notes: [Note] = []
 }
 
 @Observable
@@ -46,6 +73,10 @@ class Note: Identifiable {
   }
 
   init() {}
+}
+
+enum ManagerObject {
+  case board, note
 }
 
 enum PadColor: CaseIterable {
