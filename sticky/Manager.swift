@@ -12,20 +12,20 @@ class Manager {
   var boards: [UUID: Board] = [:]
   var board: UUID?
 
-  var note = Note()
-  func reset() {
-    note = Note()
-  }
-
   func append(_ type: ManagerObject) {
     switch type {
     case .board:
       let add = Board(number: boards.count + 1)
       boards[add.id] = add
       board = add.id
-    case .note:
+    case .note(let color):
       guard let board = board else { return }
-      boards[board]?.notes.append(note)
+      guard let color = color else {
+        boards[board]?.notes.append(Note())
+        return
+      }
+
+      boards[board]?.notes.append(Note(color.color))
     }
   }
   func remove(_ type: ManagerObject) {
@@ -63,15 +63,6 @@ class Note: Identifiable {
   var color: Color = .padYellow
   var offset: CGSize = .zero
 
-  init(_ content: AttributedString, color: Color) {
-    self.content = content
-    self.color = color
-  }
-
-  init(_ content: AttributedString) {
-    self.content = content
-  }
-
   init(_ color: Color) {
     self.color = color
   }
@@ -80,7 +71,7 @@ class Note: Identifiable {
 }
 
 enum ManagerObject {
-  case board, note
+  case board, note(PadColor?)
 }
 
 enum PadColor: CaseIterable {

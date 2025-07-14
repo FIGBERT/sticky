@@ -18,27 +18,6 @@ struct StickyView: View {
   }
 }
 
-struct StickyCreator: View {
-  @Environment(Manager.self) var manager
-
-  var body: some View {
-    HStack(alignment: .top) {
-      VStack {
-        StickyEditor(note: manager.note)
-
-        Button {
-          manager.append(.note)
-          manager.reset()
-        } label: {
-          Text("Create")
-        }
-      }
-
-      ColorPicker(note: manager.note)
-    }
-  }
-}
-
 struct StickyEditor: View {
   @Bindable var note: Note
   @GestureState private var offset: CGSize = .zero
@@ -63,21 +42,27 @@ struct StickyEditor: View {
   }
 }
 
-struct ColorPicker: View {
-  @Bindable var note: Note
+struct StickyCreator: View {
+  @Environment(Manager.self) var manager
+  @State private var color: PadColor = .yellow
 
   var body: some View {
-    VStack(spacing: 0) {
+    VStack {
+      Button {
+        manager.append(.note(color))
+      } label: {
+        Label("New Sticky", systemImage: "paintbrush.pointed.fill")
+          .labelStyle(.iconOnly)
+      }
+
       ForEach(PadColor.allCases, id: \.self) { pad in
-        Button {
-          note.color = pad.color
-        } label: {
-          Rectangle()
-            .foregroundStyle(pad.color)
-            .frame(width: 45, height: 45)
-            .border(pad.color == note.color ? Color.primary : Color.clear, width: 4)
-        }
-          .buttonStyle(.plain)
+        Rectangle()
+          .foregroundStyle(pad.color)
+          .frame(width: 45, height: 45)
+          .border(pad == color ? Color.primary : Color.clear, width: 4)
+          .onTapGesture {
+            color = pad
+          }
       }
     }
   }
@@ -94,19 +79,6 @@ struct StickyFormattingDefintion: AttributedTextFormattingDefinition {
     ValueConstraint(for: \.foregroundColor, values: [.black], default: .black)
     ValueConstraint(for: \.alignment, values: [.center], default: .center)
   }
-}
-
-#Preview {
-  var str = AttributedString("Hello, static!")
-  str.foregroundColor = .black
-  str.alignment = .center
-
-  return StickyView(note: Note(str, color: .padBlue))
-}
-
-#Preview {
-  StickyEditor(note: Note(AttributedString("Hello, editable!")))
-    .environment(Manager())
 }
 
 #Preview {

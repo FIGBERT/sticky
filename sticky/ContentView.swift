@@ -11,16 +11,9 @@ struct ContentView: View {
   @Environment(Manager.self) var manager
 
   var body: some View {
-    VStack {
-      StickyCreator()
-        .environment(manager)
-
-      Spacer()
-
-      ZStack {
-        ForEach(manager.boards[manager.board ?? UUID()]?.notes ?? []) { note in
-          StickyEditor(note: note)
-        }
+    ZStack {
+      ForEach(manager.boards[manager.board ?? UUID()]?.notes ?? []) { note in
+        StickyEditor(note: note)
       }
     }
       .frame(minWidth: 1000)

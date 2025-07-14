@@ -29,6 +29,12 @@ struct stickyApp: App {
             .padding()
             .glassBackgroundEffect()
         }
+        .ornament(attachmentAnchor: .scene(.leading)) {
+          StickyCreator()
+            .environment(manager)
+            .padding()
+            .glassBackgroundEffect()
+        }
         .ornament(visibility: showDeleteBoard, attachmentAnchor: .scene(.bottomTrailing)) {
           Button {
             manager.remove(.board)
