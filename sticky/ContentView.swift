@@ -16,7 +16,7 @@ struct ContentView: View {
         StickyEditor(note: note)
       }
     }
-      .frame(minWidth: 1000)
+      .frame(minWidth: 1000, minHeight: 540)
       .padding()
       .onAppear {
         if manager.board == nil {
