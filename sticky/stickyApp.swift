@@ -15,6 +15,14 @@ struct stickyApp: App {
     WindowGroup {
       ContentView()
         .environment(manager)
+        .ornament(attachmentAnchor: .scene(.top)) {
+          BoardBar()
+            .environment(manager)
+            .frame(minWidth: 800)
+            .padding()
+            .glassBackgroundEffect()
+        }
     }
+      .windowResizability(.contentMinSize)
   }
 }
