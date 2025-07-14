@@ -22,15 +22,6 @@ struct ContentView: View {
           StickyEditor(note: note)
         }
       }
-
-//      This button should delete a board, or a note if you drag the note to it
-//      if manager.boards.count > 1 {
-//        Button {
-//          manager.remove(.board)
-//        } label: {
-//          Label("Delete", systemImage: "trash")
-//        }
-//      }
     }
       .frame(minWidth: 1000)
       .padding()
