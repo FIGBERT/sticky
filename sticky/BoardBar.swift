@@ -49,7 +49,7 @@ struct BoardBar: View {
     HStack {
       if !editing {
         Picker("Board", selection: board) {
-          ForEach(Array(manager.boards.values)) { board in
+          ForEach(Array(manager.boards.values.sorted(by: { $0.name < $1.name }))) { board in
             Text(board.name).tag(board.id)
           }
         }

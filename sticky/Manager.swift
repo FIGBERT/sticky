@@ -20,7 +20,7 @@ class Manager {
   func append(_ type: ManagerObject) {
     switch type {
     case .board:
-      let add = Board()
+      let add = Board(number: boards.count + 1)
       boards[add.id] = add
       board = add.id
     case .note:
@@ -40,7 +40,7 @@ class Manager {
   }
 
   init() {
-    let first = Board()
+    let first = Board(number: 1)
     boards[first.id] = first
   }
 }
@@ -50,6 +50,10 @@ class Board: Identifiable {
   let id: UUID = UUID()
   var name: String = "My Board"
   var notes: [Note] = []
+
+  init(number: Int) {
+    name = "Board \(number)"
+  }
 }
 
 @Observable
