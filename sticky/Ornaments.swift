@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct BoardBar: View {
   @Environment(\.modelContext) var context
@@ -61,6 +62,7 @@ struct BoardBar: View {
         context.insert(next)
         try? context.save()
         manager.selected = next.id
+        WidgetCenter.shared.reloadAllTimelines()
       } label: {
         Label("New Board", systemImage: "plus")
       }
@@ -80,6 +82,7 @@ struct DeleteBoardButton: View {
         try? context.delete(model: Board.self, where: #Predicate { $0.id == selected })
         try? context.save()
         manager.selected = boards.first?.id
+        WidgetCenter.shared.reloadAllTimelines()
       }
     } label: {
       Label("Delete", systemImage: "trash")

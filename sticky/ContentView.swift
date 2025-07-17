@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct ContentView: View {
   @Environment(\.modelContext) var context
@@ -63,6 +64,7 @@ struct ContentView: View {
             context.insert(next)
             try? context.save()
             manager.selected = next.id
+            WidgetCenter.shared.reloadAllTimelines()
           } else {
             manager.selected = boards.first?.id
           }

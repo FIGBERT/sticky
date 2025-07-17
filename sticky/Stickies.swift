@@ -7,17 +7,7 @@
 
 import SwiftUI
 import SwiftData
-
-struct StickyView: View {
-  var note: Note
-
-  var body: some View {
-    Text(note.content)
-      .padding()
-      .frame(minWidth: 180, maxWidth: 180, minHeight: 180, alignment: .top)
-      .background(note.color.value)
-  }
-}
+import WidgetKit
 
 struct StickyEditor: View {
   @Bindable var note: Note
@@ -56,6 +46,7 @@ struct StickyCreator: View {
       Button {
         context.insert(Note(color, parent: boards[manager.selected]!))
         try? context.save()
+        WidgetCenter.shared.reloadAllTimelines()
       } label: {
         Label("New Sticky", systemImage: "paintbrush.pointed.fill")
           .labelStyle(.iconOnly)
