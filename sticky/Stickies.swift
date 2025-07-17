@@ -44,14 +44,18 @@ struct StickyEditor: View {
 }
 
 struct StickyCreator: View {
+  @Environment(\.modelContext) var context
   @Environment(Manager.self) var manager
+
+  @Query(sort: \Board.name, order: .forward) var boards: [Board]
 
   @State private var color: PadColor = .yellow
 
   var body: some View {
     VStack {
       Button {
-        manager.addNote(color)
+        context.insert(Note(color, parent: boards[manager.selected]!))
+        try? context.save()
       } label: {
         Label("New Sticky", systemImage: "paintbrush.pointed.fill")
           .labelStyle(.iconOnly)

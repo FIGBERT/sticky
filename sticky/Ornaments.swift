@@ -9,7 +9,10 @@ import SwiftUI
 import SwiftData
 
 struct BoardBar: View {
+  @Environment(\.modelContext) var context
   @Environment(Manager.self) var manager
+
+  @Query(sort: \Board.name, order: .forward) var boards: [Board]
 
   @State private var editing = false
   @State private var name = ""
@@ -27,7 +30,7 @@ struct BoardBar: View {
     HStack {
       if !editing {
         Picker("Board", selection: board) {
-          ForEach(manager.boards) { board in
+          ForEach(boards) { board in
             Text(board.name).tag(Optional(board.id))
           }
         }
@@ -35,7 +38,7 @@ struct BoardBar: View {
         TextField("Board", text: $name)
           .padding(.leading)
           .onSubmit {
-            manager.board?.name = name
+            boards[manager.selected]?.name = name
             editing = false
           }
       }
@@ -44,9 +47,9 @@ struct BoardBar: View {
 
       Button {
         if editing {
-          manager.board?.name = name
+          boards[manager.selected]?.name = name
         } else {
-          name = manager.board?.name ?? ""
+          name = boards[manager.selected]?.name ?? ""
         }
         editing.toggle()
       } label: {
@@ -54,7 +57,10 @@ struct BoardBar: View {
       }
 
       Button {
-        manager.addBoard()
+        let next = Board(number: boards.count+1)
+        context.insert(next)
+        try? context.save()
+        manager.selected = next.id
       } label: {
         Label("New Board", systemImage: "plus")
       }
@@ -63,11 +69,18 @@ struct BoardBar: View {
 }
 
 struct DeleteBoardButton: View {
+  @Environment(\.modelContext) var context
   @Environment(Manager.self) var manager
+
+  @Query(sort: \Board.name, order: .forward) var boards: [Board]
 
   var body: some View {
     Button {
-      manager.removeBoard()
+      if let selected = manager.selected {
+        try? context.delete(model: Board.self, where: #Predicate { $0.id == selected })
+        try? context.save()
+        manager.selected = boards.first?.id
+      }
     } label: {
       Label("Delete", systemImage: "trash")
         .labelStyle(.iconOnly)
