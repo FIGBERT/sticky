@@ -18,6 +18,6 @@ struct stickyApp: App {
         .environment(manager)
         .modelContainer(for: [Board.self, Note.self])
     }
-      .windowResizability(.contentMinSize)
+      .windowResizability(.contentSize)
   }
 }

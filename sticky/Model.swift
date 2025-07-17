@@ -7,15 +7,19 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 @Model
 class Board: Identifiable {
   @Attribute(.unique) var name: String
   @Relationship(deleteRule: .cascade, inverse: \Note.board) var notes: [Note]
 
+  var size: BoardSize
+
   init(number: Int) {
     name = "Board \(number)"
     notes = []
+    size = .medium
   }
 }
 
@@ -45,6 +49,46 @@ class Note: Identifiable {
 
   convenience init(_ parent: Board) {
     self.init(.yellow, parent: parent)
+  }
+}
+
+enum BoardSize: CaseIterable, Codable {
+  case small, medium, extraLargePortrait
+
+  var name: String {
+    switch self {
+    case .small: "Small"
+    case .medium: "Medium"
+    case .extraLargePortrait: "Extra Large Portrait"
+    }
+  }
+  var icon: String {
+    switch self {
+    case .small: "widget.small"
+    case .medium: "widget.medium"
+    case .extraLargePortrait: "widget.extralarge"
+    }
+  }
+
+  var width: CGFloat {
+    switch self {
+    case .small, .extraLargePortrait: 180*4
+    case .medium: 360*4
+    }
+  }
+  var height: CGFloat {
+    switch self {
+    case .small, .medium: 170*4
+    case .extraLargePortrait: 540*4
+    }
+  }
+
+  var family: WidgetFamily {
+    switch self {
+    case .small: .systemSmall
+    case .medium: .systemMedium
+    case .extraLargePortrait: .systemExtraLargePortrait
+    }
   }
 }
 

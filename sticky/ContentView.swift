@@ -21,13 +21,6 @@ struct ContentView: View {
     return allNotes.filter { $0.board?.id == selected }
   }
 
-  var showDeleteBoard: Visibility {
-    if boards.count > 1 {
-      return .visible
-    }
-    return .hidden
-  }
-
   var body: some View {
     ZStack {
       ForEach(notes) { note in
@@ -35,7 +28,7 @@ struct ContentView: View {
           .modelContext(context)
       }
     }
-      .frame(minWidth: 1000, minHeight: 540)
+      .frame(width: boards[manager.selected]?.size.width, height: boards[manager.selected]?.size.height)
       .padding()
       .ornament(attachmentAnchor: .scene(.top)) {
         BoardBar()
@@ -52,10 +45,11 @@ struct ContentView: View {
           .padding()
           .glassBackgroundEffect()
       }
-      .ornament(visibility: showDeleteBoard, attachmentAnchor: .scene(.bottomTrailing)) {
-        DeleteBoardButton()
+      .ornament(attachmentAnchor: .scene(.trailing)) {
+        BoardSizePicker()
           .environment(manager)
           .modelContext(context)
+          .padding()
           .glassBackgroundEffect()
       }
       .onAppear {

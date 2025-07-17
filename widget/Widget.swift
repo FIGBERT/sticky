@@ -38,27 +38,44 @@ struct widgetView : View {
     allNotes.filter { $0.board?.name == entry.configuration.selected?.id }
   }
 
+  var matching: Bool {
+    switch entry.configuration.selected?.type.family {
+    case family:
+      return true
+    // There is an issue presently where systemExtraLargePortrait
+    // registers as systemLarge on device, but is not supported for
+    // visionOS in code (this despite the documentation claiming that
+    // all system sizes are supported on the platform).
+    case .systemExtraLargePortrait:
+      return true
+    default:
+      return false
+    }
+  }
+
   var body: some View {
     ZStack {
-      Text(entry.configuration.selected?.id ?? "No Board, Oops")
-        .font(.caption)
-        .opacity(0.5)
-
-      ForEach(notes) { note in
-        Rectangle()
-          .fill(note.color.value)
-          .frame(width: 45, height: 45)
-          .overlay {
-            switch levelOfDetail {
-            case .default:
-              Text(note.content)
-                .minimumScaleFactor(0.01)
-                .padding(8)
-            default:
-              Image(systemName: "scribble.variable")
+      if matching {
+        ForEach(notes) { note in
+          Rectangle()
+            .fill(note.color.value)
+            .frame(width: 45, height: 45)
+            .overlay {
+              switch levelOfDetail {
+              case .default:
+                Text(note.content)
+                  .minimumScaleFactor(0.01)
+                  .padding(8)
+              default:
+                Image(systemName: "scribble.variable")
+              }
             }
-          }
-//          .offset(CGSize(width: note.offset.width, height: note.offset.height))
+            .offset(CGSize(width: note.offset.width/4, height: note.offset.height/4))
+        }
+      } else {
+        Text("Try Again: Board Dimensions Don't Match Widget Type")
+          .font(.caption)
+          .opacity(0.3)
       }
     }
   }

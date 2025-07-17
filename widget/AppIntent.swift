@@ -19,6 +19,7 @@ struct ConfigurationAppIntent: WidgetConfigurationIntent {
 
 struct BoardEntity: AppEntity {
   var id: String
+  var type: BoardSize
 
   static var typeDisplayRepresentation: TypeDisplayRepresentation = "Board"
   static var defaultQuery = BoardQuery()
@@ -51,7 +52,7 @@ struct BoardQuery: EntityQuery {
       return []
     }
 
-    return boards.map({ BoardEntity(id: $0.name) })
+    return boards.map({ BoardEntity(id: $0.name, type: $0.size) })
   }
 }
 
