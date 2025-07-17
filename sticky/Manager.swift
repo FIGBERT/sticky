@@ -6,90 +6,55 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @Observable
 class Manager {
-  var boards: [UUID: Board] = [:]
-  var board: UUID?
+  private let container = try? ModelContainer(for: Board.self, Note.self)
+  private var context: ModelContext? { container?.mainContext }
 
-  func append(_ type: ManagerObject) {
-    switch type {
-    case .board:
-      let add = Board(number: boards.count + 1)
-      boards[add.id] = add
-      board = add.id
-    case .note(let color):
-      guard let board = board else { return }
-      guard let color = color else {
-        boards[board]?.notes.append(Note())
-        return
-      }
+  var selected: Board.ID?
+  var board: Board? {
+    boards.first(where: { $0.id == selected })
+  }
 
-      boards[board]?.notes.append(Note(color.color))
+  var boards: [Board] {
+    let query = FetchDescriptor<Board>(sortBy: [.init(\.name)])
+    let result = try? context?.fetch(query)
+
+    return result ?? []
+  }
+  var notes: [Note] {
+    guard let board = selected else { return [] }
+
+    let query = FetchDescriptor<Note>(predicate: #Predicate { $0.board?.id == board })
+    let result = try? context?.fetch(query)
+
+    return result ?? []
+  }
+
+  func addNote(_ color: PadColor) {
+    context?.insert(Note(color, parent: board!))
+    try? context?.save()
+  }
+  func addBoard() {
+    let next = Board(number: boards.count+1)
+    context?.insert(next)
+    try? context?.save()
+    selected = next.id
+  }
+  func removeBoard() {
+    if let board = selected {
+      try? context?.delete(model: Board.self, where: #Predicate{ $0.id == board })
+      try? context?.save()
+      findBoardSelection()
     }
   }
-  func remove(_ type: ManagerObject) {
-    switch type {
-    case .board:
-      guard let id = board else { return }
-      boards.removeValue(forKey: id)
-      board = boards.keys.first
-    case .note:
-      return
+  func findBoardSelection() {
+    if boards.isEmpty {
+      addBoard()
+    } else {
+      selected = boards.first?.id
     }
   }
-
-  init() {
-    let first = Board(number: 1)
-    boards[first.id] = first
-  }
-}
-
-@Observable
-class Board: Identifiable {
-  let id: UUID = UUID()
-  var name: String = "My Board"
-  var notes: [Note] = []
-
-  init(number: Int) {
-    name = "Board \(number)"
-  }
-}
-
-@Observable
-class Note: Identifiable {
-  let id: UUID = UUID()
-  var content: AttributedString = ""
-  var color: Color = .padYellow
-  var offset: CGSize = .zero
-
-  init(_ color: Color) {
-    self.color = color
-  }
-
-  init() {}
-}
-
-enum ManagerObject {
-  case board, note(PadColor?)
-}
-
-enum PadColor: CaseIterable {
-  case yellow, blue, green, pink
-
-  var color: Color {
-    switch self {
-    case .yellow: return .padYellow
-    case .blue: return .padBlue
-    case .green: return .padGreen
-    case .pink: return .padPink
-    }
-  }
-}
-
-extension Color {
-  static let padYellow = Color(.displayP3, red: 252/255, green: 244/255, blue: 167/255)
-  static let padBlue = Color(.displayP3, red: 188/255, green: 242/255, blue: 253/255)
-  static let padGreen = Color(.displayP3, red: 195/255, green: 253/255, blue: 170/255)
-  static let padPink = Color(.displayP3, red: 246/255, green: 201/255, blue: 200/255)
 }

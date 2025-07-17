@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct stickyApp: App {
@@ -22,6 +23,11 @@ struct stickyApp: App {
     WindowGroup {
       ContentView()
         .environment(manager)
+        .onAppear {
+          if manager.selected == nil {
+            manager.findBoardSelection()
+          }
+        }
         .ornament(attachmentAnchor: .scene(.top)) {
           BoardBar()
             .environment(manager)
@@ -36,12 +42,8 @@ struct stickyApp: App {
             .glassBackgroundEffect()
         }
         .ornament(visibility: showDeleteBoard, attachmentAnchor: .scene(.bottomTrailing)) {
-          Button {
-            manager.remove(.board)
-          } label: {
-            Label("Delete", systemImage: "trash")
-              .labelStyle(.iconOnly)
-          }
+          DeleteBoardButton()
+            .environment(manager)
             .glassBackgroundEffect()
         }
     }

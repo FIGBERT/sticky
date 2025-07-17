@@ -6,23 +6,19 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
   @Environment(Manager.self) var manager
 
   var body: some View {
     ZStack {
-      ForEach(manager.boards[manager.board ?? UUID()]?.notes ?? []) { note in
+      ForEach(manager.notes) { note in
         StickyEditor(note: note)
       }
     }
       .frame(minWidth: 1000, minHeight: 540)
       .padding()
-      .onAppear {
-        if manager.board == nil {
-          manager.board = manager.boards.keys.first
-        }
-      }
   }
 }
 

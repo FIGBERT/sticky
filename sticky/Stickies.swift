@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct StickyView: View {
   var note: Note
@@ -14,7 +15,7 @@ struct StickyView: View {
     Text(note.content)
       .padding()
       .frame(minWidth: 180, maxWidth: 180, minHeight: 180, alignment: .top)
-      .background(note.color)
+      .background(note.color.value)
   }
 }
 
@@ -27,7 +28,7 @@ struct StickyEditor: View {
       .padding()
       .attributedTextFormattingDefinition(StickyFormattingDefintion())
       .frame(width: 180, height: 180)
-      .background(note.color)
+      .background(note.color.value)
       .offset(CGSize(width: note.offset.width + offset.width, height: note.offset.height + offset.height))
       .gesture(
         DragGesture()
@@ -44,12 +45,13 @@ struct StickyEditor: View {
 
 struct StickyCreator: View {
   @Environment(Manager.self) var manager
+
   @State private var color: PadColor = .yellow
 
   var body: some View {
     VStack {
       Button {
-        manager.append(.note(color))
+        manager.addNote(color)
       } label: {
         Label("New Sticky", systemImage: "paintbrush.pointed.fill")
           .labelStyle(.iconOnly)
@@ -57,7 +59,7 @@ struct StickyCreator: View {
 
       ForEach(PadColor.allCases, id: \.self) { pad in
         Rectangle()
-          .foregroundStyle(pad.color)
+          .foregroundStyle(pad.value)
           .frame(width: 45, height: 45)
           .border(pad == color ? Color.primary : Color.clear, width: 4)
           .onTapGesture {
