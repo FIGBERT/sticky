@@ -10,6 +10,7 @@ import SwiftData
 import WidgetKit
 
 struct StickyEditor: View {
+  @Environment(\.modelContext) var context
   @Bindable var note: Note
   @GestureState private var offset: CGSize = .zero
 
@@ -17,6 +18,10 @@ struct StickyEditor: View {
     TextEditor(text: $note.content)
       .padding()
       .attributedTextFormattingDefinition(StickyFormattingDefintion())
+      .onSubmit {
+        try? context.save()
+        WidgetCenter.shared.reloadAllTimelines()
+      }
       .frame(width: 180, height: 180)
       .background(note.color.value)
       .offset(CGSize(width: note.offset.width + offset.width, height: note.offset.height + offset.height))
@@ -28,6 +33,8 @@ struct StickyEditor: View {
           .onEnded { value in
             note.offset.width += value.translation.width
             note.offset.height += value.translation.height
+            try? context.save()
+            WidgetCenter.shared.reloadAllTimelines()
           }
       )
   }

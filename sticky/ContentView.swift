@@ -32,6 +32,7 @@ struct ContentView: View {
     ZStack {
       ForEach(notes) { note in
         StickyEditor(note: note)
+          .modelContext(context)
       }
     }
       .frame(minWidth: 1000, minHeight: 540)
