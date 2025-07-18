@@ -101,6 +101,14 @@ struct BoardSizePicker: View {
 
   var body: some View {
     VStack {
+      Button {
+        manager.zapping.toggle()
+      } label: {
+        Label("Delete Notes", systemImage: "bolt.fill")
+          .labelStyle(.iconOnly)
+      }
+        .padding(.bottom)
+
       ForEach(BoardSize.allCases, id: \.self) { size in
         // The lack of conditional buttonStyles is frankly apalling
         if boards[manager.selected]?.size == size {

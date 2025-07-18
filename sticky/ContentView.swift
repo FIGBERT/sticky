@@ -25,6 +25,7 @@ struct ContentView: View {
     ZStack {
       ForEach(notes) { note in
         StickyEditor(note: note)
+          .environment(manager)
           .modelContext(context)
       }
     }

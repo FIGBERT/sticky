@@ -10,7 +10,8 @@ import SwiftData
 
 @Observable
 class Manager {
-  var selected: Board.ID?
+  var selected: Board.ID? = nil
+  var zapping: Bool = false
 }
 
 extension Array where Element: Board {

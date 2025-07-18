@@ -11,6 +11,7 @@ import WidgetKit
 
 struct StickyEditor: View {
   @Environment(\.modelContext) var context
+  @Environment(Manager.self) var manager
   @Bindable var note: Note
   @GestureState private var offset: CGSize = .zero
 
@@ -24,6 +25,23 @@ struct StickyEditor: View {
       }
       .frame(width: 180, height: 180)
       .background(note.color.value)
+      .overlay {
+        if manager.zapping {
+          Image(systemName: "xmark")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 8, height: 8)
+            .padding(5)
+            .background(.tertiary)
+            .clipShape(Circle())
+            .offset(x: -100, y: -100)
+            .onTapGesture {
+              context.delete(note)
+              try? context.save()
+              WidgetCenter.shared.reloadAllTimelines()
+            }
+        }
+      }
       .offset(CGSize(width: note.offset.width + offset.width, height: note.offset.height + offset.height))
       .gesture(
         DragGesture()
